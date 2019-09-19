@@ -84,15 +84,13 @@ void
 ConsoleTest (const char *in, const char *out)
 {
     char ch;
-    console = new Console (in, out, ReadAvailHandler, WriteDoneHandler, 0);
     readAvail = new Semaphore ("read avail", 0);
     writeDone = new Semaphore ("write done", 0);
+    console = new Console (in, out, ReadAvailHandler, WriteDoneHandler, 0);
     for (;;)
       {
-	      readAvail->P ();	// wait for character to arrive
+	      readAvail->P ();
 	      ch = console->GetChar ();
-	       console->PutChar (ch);	// echo it!
-    	    writeDone->P ();	// wait for write to finish
 	       if (ch == 'q' || ch==EOF) {
 	          printf ("Nothing more, bye!\n");
 	           break;		// if q, quit
@@ -100,14 +98,14 @@ ConsoleTest (const char *in, const char *out)
          if(ch != '\n')
          {
            console->PutChar ('<');
-           writeDone->P ();  // wait for write to finish
+           writeDone->P ();
          }
-         console->PutChar (ch);	// echo it!
+         console->PutChar (ch);
          writeDone->P ();
          if(ch != '\n')
          {
            console->PutChar ('>');
-	          writeDone->P ();	// wait for write to finish
+	          writeDone->P ();
          }
       }
     delete console;

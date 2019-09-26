@@ -110,6 +110,7 @@ ConsoleTest(const char *in, const char *out) {
 void
 SynchConsoleTest(const char *in, const char *out) {
   char ch;
+  delete synchconsole;
   auto *test_synchconsole = new SynchConsole(in, out);
   while ((ch = test_synchconsole->SynchGetChar()) != EOF)
   {
@@ -120,5 +121,6 @@ SynchConsoleTest(const char *in, const char *out) {
       test_synchconsole->SynchPutChar('>');
   }
   fprintf(stderr, "EOF detected in SynchConsole!\n");
+  delete test_synchconsole;
 }
 #endif //CHANGED

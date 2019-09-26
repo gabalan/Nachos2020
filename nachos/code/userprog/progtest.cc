@@ -112,7 +112,13 @@ SynchConsoleTest(const char *in, const char *out) {
   char ch;
   auto *test_synchconsole = new SynchConsole(in, out);
   while ((ch = test_synchconsole->SynchGetChar()) != EOF)
+  {
+    if(ch != '\n')
+      test_synchconsole->SynchPutChar ('<');
     test_synchconsole->SynchPutChar(ch);
+    if (ch != '\n')
+      test_synchconsole->SynchPutChar('>');
+  }
   fprintf(stderr, "EOF detected in SynchConsole!\n");
 }
 #endif //CHANGED

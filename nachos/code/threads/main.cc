@@ -135,7 +135,7 @@ main(int argc, char **argv) {
           SynchConsoleTest(*(argv + 1), *(argv + 2));
           argCount = 3;
         }
-#endif CHANGED
+#endif // CHANGED
 #endif // USER_PROGRAM
 #ifdef FILESYS
     if (!strcmp (*argv, "-cp"))

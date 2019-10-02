@@ -126,7 +126,7 @@ SynchConsoleTest (const char *in, const char *out)
 {
   char ch;
   delete synchconsole;
-  SynchConsole *test_synchconsole = new SynchConsole(in, out);
+  auto *test_synchconsole = new SynchConsole(in, out);
   while ((ch = test_synchconsole->SynchGetChar()) != EOF){
     if (ch!='\n')
       test_synchconsole->SynchPutChar('<');

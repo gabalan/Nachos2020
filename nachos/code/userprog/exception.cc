@@ -94,12 +94,12 @@ ExceptionHandler (ExceptionType which)
   		    break;
   		  }
 		case SC_SynchPutString:{
-            int c = machine->ReadRegister (4); // recupération de la chaine de caractère
-            char* to = new char[MAX_STRING_SIZE+1]; // buffer le +1 permet d'ajouter le caractere de fin de chaine
-            synchconsole->copyStringFromMachine(c, to, MAX_STRING_SIZE); // copie chaine mips vers chaine Linux
+            int c = machine->ReadRegister (4); 
+            char* to = new char[MAX_STRING_SIZE+1]; 
+            synchconsole->copyStringFromMachine(c, to, MAX_STRING_SIZE); 
             DEBUG('a',"appel système de la fonction SynchPutString\n");
             synchconsole->SynchPutString(to);
-            delete [] to; //desallocation du buffer
+            delete [] to; 
             break;
           }
     #endif //CHANGED

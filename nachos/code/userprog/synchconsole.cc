@@ -47,7 +47,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 
 }
 
-int copyStringFromMachine(int from, char *to, unsigned size){
+int SynchConsole::copyStringFromMachine(int from, char *to, unsigned size){
   unsigned i=0;
   int res;
   while ((i<size) && (machine->ReadMem(from+i,1,&res)))

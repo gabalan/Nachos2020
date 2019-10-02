@@ -84,7 +84,7 @@ ExceptionHandler (ExceptionType which)
 		    interrupt->Halt ();
 		    break;
 		  }
-     #ifdef CHANGED
+ #ifdef CHANGED
       case SC_PutChar:
   		  {
           int c = machine->ReadRegister(4);
@@ -93,7 +93,16 @@ ExceptionHandler (ExceptionType which)
            DEBUG ('s', "fin de l'appel de la fonction SynchPutChar.\n");
   		    break;
   		  }
-        #endif //CHANGED
+		case SC_SynchPutString:{
+            int c = machine->ReadRegister (4); // recupération de la chaine de caractère
+            char* to = new char[MAX_STRING_SIZE+1]; // buffer le +1 permet d'ajouter le caractere de fin de chaine
+            synchconsole->copyStringFromMachine(c, to, MAX_STRING_SIZE); // copie chaine mips vers chaine Linux
+            DEBUG('a',"appel système de la fonction SynchPutString\n");
+            synchconsole->SynchPutString(to);
+            delete [] to; //desallocation du buffer
+            break;
+          }
+    #endif //CHANGED
 		default:
 		  {
 		    printf("Unimplemented system call %d\n", type);

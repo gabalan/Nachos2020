@@ -33,7 +33,7 @@
 	.ent	__start
 __start:
 	jal	main
-	move	$4,$0
+	move	$4,$2
 	jal	Exit	 /* if we return from main, exit(0) */
 	.end __start
 
@@ -149,7 +149,6 @@ Yield:
 
   
 #ifdef CHANGED
-/*PutChar*/
   .globl PutChar
   .ent	PutChar
 PutChar:
@@ -158,14 +157,22 @@ PutChar:
   j	$31
   .end PutChar
   
-  .globl SynchPutString
-	.ent SynchPutString
-
-SynchPutString:
-	addiu $2,$0,SC_SynchPutString
+  .globl PutString
+	.ent PutString
+PutString:
+	addiu $2,$0,SC_PutString
 	syscall
 	j	$31
-	.end SynchPutString
+	.end PutString
+
+   .globl GetChar
+    .ent  GetChar
+GetChar:
+    addiu $2,$0,SC_GetChar
+    syscall
+    j	$31
+    .end GetChar
+
 #endif //CHANGED
 
 

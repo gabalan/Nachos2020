@@ -87,9 +87,6 @@ void
 ConsoleTest (const char *in, const char *out)
 {
     char ch;
-    #ifdef CHANGED
-    delete synchconsole;
-    #endif //CHANGED
     readAvail = new Semaphore ("read avail", 0);
     writeDone = new Semaphore ("write done", 0);
     console = new Console (in, out, ReadAvailHandler, WriteDoneHandler, 0);
@@ -125,7 +122,6 @@ void
 SynchConsoleTest (const char *in, const char *out)
 {
   char ch;
-  delete synchconsole;
   auto *test_synchconsole = new SynchConsole(in, out);
   while ((ch = test_synchconsole->SynchGetChar()) != EOF){
     if (ch!='\n')

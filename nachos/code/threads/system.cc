@@ -233,7 +233,6 @@ Cleanup ()
     delete synchDisk;
     synchDisk = NULL;
 #endif
-
     delete timer;
     timer = NULL;
     delete scheduler;
@@ -245,3 +244,31 @@ Cleanup ()
 
     Exit (0);
 }
+
+#ifdef CHANGED
+#ifdef USER_PROGRAM
+int copyStringFromMachine(int from, char *to, unsigned size)
+{
+  unsigned i=0;
+  int res;
+  while ((i<size) && (machine->ReadMem(from+i,1,&res)))
+    {
+      to[i]= (char)res;
+      i++;
+    }
+  to[i] = '\0';
+  return i;
+}
+
+int copyStringToMachine(char* from, int to, unsigned size)
+{
+  unsigned i = 0;
+  while (i < size - 1 && from[i] != '\0')
+    {
+       machine->WriteMem(to+i, 1, (int)from[i]);
+       i++;
+    }
+    machine->WriteMem(to+i, 1, '\0');
+}
+#endif //USER_PROGRAM
+#endif //CHANGED

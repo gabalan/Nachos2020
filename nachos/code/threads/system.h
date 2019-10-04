@@ -17,7 +17,7 @@
 #include "timer.h"
 
 #ifdef CHANGED
-	#define MAX_STRING_SIZE 30
+#define MAX_STRING_SIZE 32
 #endif //CHANGED
 
 // Initialization and cleanup routines
@@ -36,10 +36,15 @@ extern Timer *timer;		// the hardware alarm clock
 #ifdef USER_PROGRAM
 #include "machine.h"
 extern Machine *machine;	// user program memory and registers
+
 #ifdef CHANGED
-		#include "synchconsole.h"
-		extern SynchConsole *synchconsole;
-	#endif //CHANGED
+#include "synchconsole.h"
+
+extern SynchConsole *synchconsole;
+
+int copyStringFromMachine(int from, char *to, unsigned size);
+int copyStringToMachine(char* from, int to, unsigned size);
+#endif //CHANGED
 #endif
 
 #ifdef FILESYS_NEEDED		// FILESYS or FILESYS_STUB

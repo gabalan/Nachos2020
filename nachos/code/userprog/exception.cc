@@ -104,7 +104,7 @@ ExceptionHandler(ExceptionType which)
         {
           int c = machine->ReadRegister(4);
           char *to = new char[MAX_STRING_SIZE + 1];
-          synchconsole->copyStringFromMachine(c, to, MAX_STRING_SIZE);
+          copyStringFromMachine(c, to, MAX_STRING_SIZE);
           DEBUG('a', "appel système de la fonction SynchPutString\n");
           synchconsole->SynchPutString(to);
           delete[] to;
@@ -115,6 +115,19 @@ ExceptionHandler(ExceptionType which)
           DEBUG('a', "GetChar syscall");
           int c = synchconsole->SynchGetChar();
           machine->WriteRegister(2, c);
+          break;
+        }
+      case SC_GetString:
+        {
+          DEBUG('a', "GetString syscall");
+          char* buf = new char[MAX_STRING_SIZE];
+          int to = machine->ReadRegister(4);
+          int size = machine->ReadRegister(5);
+
+          synchconsole->SynchGetString(buf,size);
+          copyStringToMachine(buf, to, size);
+
+          delete[] buf;
           break;
         }
 #endif //CHANGED

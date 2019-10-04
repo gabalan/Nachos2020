@@ -4,7 +4,6 @@ int
 main ()
 {
 	
-	SynchPutString("test de SynchPutString\n");
-    
+	PutString("test de SynchPutString\n");
     return 0;
 }

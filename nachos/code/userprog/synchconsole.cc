@@ -55,7 +55,20 @@ void SynchConsole::SynchGetString(char *s, int n)
     if (c == EOF)
       i--;
 
-    s[i] = '\0'
+    s[i] = '\0';
 
+}
+void SynchConsole::SynchPutInt(int n)
+{
+  char* str = new char[MAX_STRING_SIZE];
+  snprintf(str, MAX_STRING_SIZE, "%i", n);
+  SynchPutString(str);
+  delete[] str;
+}
+void SynchConsole::SynchGetInt(int *n)
+{
+  char* str = new char[MAX_STRING_SIZE];
+  SynchGetString(str, MAX_STRING_SIZE);
+  sscanf(str, "%i", n);
 }
 #endif // CHANGED

@@ -130,6 +130,21 @@ ExceptionHandler(ExceptionType which)
           delete[] buf;
           break;
         }
+      case SC_PutInt:
+        {
+          int n;
+          n = machine->ReadRegister(4);
+          synchconsole->SynchPutInt(n);
+          break;
+        }
+      case SC_GetInt:
+        {
+          int to, n;
+          to = machine->ReadRegister(4);
+          synchconsole->SynchGetInt(&n);
+          machine->WriteMem(to, sizeof(int), n);
+          break;
+        }
 #endif //CHANGED
       default:
         {

@@ -3,7 +3,7 @@
 int
 main ()
 {
-	
-	PutString("test de PutString\n");
+    PutInt(10);
+    /* not reached */
     return 0;
 }

@@ -269,6 +269,7 @@ int copyStringToMachine(char* from, int to, unsigned size)
        i++;
     }
     machine->WriteMem(to+i, 1, '\0');
+    return i;
 }
 #endif //USER_PROGRAM
 #endif //CHANGED

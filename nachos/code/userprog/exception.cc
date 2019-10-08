@@ -132,17 +132,21 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_PutInt:
         {
+          DEBUG('a',"Begin PutInt");
           int n;
           n = machine->ReadRegister(4);
           synchconsole->SynchPutInt(n);
+          DEBUG('a', "End PutInt");
           break;
         }
       case SC_GetInt:
         {
+          DEBUG('a',"Begin GetInt");
           int to, n;
           to = machine->ReadRegister(4);
           synchconsole->SynchGetInt(&n);
           machine->WriteMem(to, sizeof(int), n);
+          DEBUG('a', "End GetInt");
           break;
         }
 #endif //CHANGED

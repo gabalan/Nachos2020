@@ -46,7 +46,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 {
   int i = 0;
   int c = 0;
-  while (i < n && c != EOF)
+  while (i < n && c != EOF && c != '\n')
     {
       c = SynchGetChar();
       s[i] = (char)c;
@@ -70,5 +70,6 @@ void SynchConsole::SynchGetInt(int *n)
   char* str = new char[MAX_STRING_SIZE];
   SynchGetString(str, MAX_STRING_SIZE);
   sscanf(str, "%i", n);
+  delete[] str;
 }
 #endif // CHANGED

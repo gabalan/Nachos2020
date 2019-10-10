@@ -60,15 +60,15 @@ void SynchConsole::SynchGetString(char *s, int n)
 }
 void SynchConsole::SynchPutInt(int n)
 {
-  char* str = new char[MAX_STRING_SIZE];
-  snprintf(str, MAX_STRING_SIZE, "%i", n);
+  char* str = new char[MAX_INT_LENGTH];
+  snprintf(str, MAX_INT_LENGTH, "%i", n);
   SynchPutString(str);
   delete[] str;
 }
 void SynchConsole::SynchGetInt(int *n)
 {
-  char* str = new char[MAX_STRING_SIZE];
-  SynchGetString(str, MAX_STRING_SIZE);
+  char* str = new char[MAX_INT_LENGTH];
+  SynchGetString(str, MAX_INT_LENGTH);
   sscanf(str, "%i", n);
   delete[] str;
 }

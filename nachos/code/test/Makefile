@@ -44,7 +44,7 @@ LD	:=	$(GCCDIR)/ld
 OBJDUMP	:=	$(GCCDIR)/objdump
 
 CPP	:=	$(GCCDIR)/$(GCC) -E -P
-INCDIR	:=	-I../userprog -I../threads
+INCDIR	:=	-I../userprog -I../threads -I/opt/xgcc/lib/gcc-lib/decstation-ultrix/2.95.2/include/
 CFLAGS 	:=	-DIN_USER_MODE -c $(INCDIR) -G 0 -Wall -O2 -DCHANGED
 
 SOURCES	:=	$(wildcard *.c)
@@ -59,13 +59,16 @@ start.o: start.S ../userprog/syscall.h
 	$(AS) $(ASFLAGS) -o start.o strt.s
 	rm strt.s
 
+vsprintf.o : lib/vsprintf.c
+	$(CC) $(CFLAGS) -c $<
+
 %.o: %.c ../userprog/syscall.h lib/vsprintf.h
 	$(CC) $(CFLAGS) -c $<
 
 # LB: Caution! start.o should appear *before* $< for the load!
 
-%.coff: %.o start.o lib/vsprintf.o
-	$(LD) $(LDFLAGS) start.o lib/vsprintf.o $< -o $@
+%.coff: %.o start.o vsprintf.o
+	$(LD) $(LDFLAGS) start.o vsprintf.o $< -o $@
 
 %.s: %.coff
 	$(OBJDUMP) -d $< | sed -e 's/\<zero\>/r0/g;s/\<at\>/r1/g;s/\<v0\>/r2/g;s/\<v1\>/r3/g;s/\<a0\>/r4/g;s/\<a1\>/r5/g;s/\<a2\>/r6/g;s/\<a3\>/r7/g;s/\<t0\>/r8/g;s/\<gp\>/r28/g;s/\<sp\>/r29/g;s/\<s8\>/r30/g;s/\<ra\>/r31/g;' > $@

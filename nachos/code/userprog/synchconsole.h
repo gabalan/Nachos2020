@@ -19,6 +19,7 @@ class SynchConsole: dontcopythis {
 
  private:
   Console *console;
+  const int MAX_INT_LENGTH = 3 * sizeof(int) + 2;
 };
 #endif // SYNCHCONSOLE_H
 #endif // CHANGED

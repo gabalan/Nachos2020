@@ -11,7 +11,6 @@
  */
 
 #include "vsprintf.h"
-#include <stdarg.h>
 #include "syscall.h"
 
 #define _U	0x01	/* upper */
@@ -62,7 +61,16 @@ static inline unsigned char __tolower(unsigned char c)
     c -= 'A'-'a';
   return c;
 }
+
+static inline unsigned char __toupper(unsigned char c)
+{
+  if (islower(c))
+    c -= 'a'-'A';
+  return c;
+}
+
 #define tolower(c) __tolower(c)
+#define toupper(c) __toupper(c)
 
 size_t strnlen(const char *s, size_t count)
 {
@@ -410,9 +418,11 @@ int sprintf(char *buf, const char *fmt, ...)
   return i;
 }
 
+#define MAX_STRING_SIZE 256
+
 int printf(const char* format, ...)
 {
-  char* buffer = new char[MAX_STRING_SIZE];
+  char buffer[MAX_STRING_SIZE];
   va_list args;
   int nb_written;
 

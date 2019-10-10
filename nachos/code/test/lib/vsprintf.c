@@ -52,6 +52,7 @@ unsigned char _ctype[] = {
 #define __ismask(x) (_ctype[(int)(unsigned char)(x)])
 
 #define islower(c)	((__ismask(c)&(_L)) != 0)
+#define isupper(c)	((__ismask(c)&(_U)) != 0)
 #define isdigit(c)	((__ismask(c)&(_D)) != 0)
 #define isxdigit(c)	((__ismask(c)&(_D|_X)) != 0)
 

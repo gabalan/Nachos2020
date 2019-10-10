@@ -5,6 +5,6 @@
 #include "lib/vsprintf.h"
 
 int main(){
-  printf("test %d %s %x %o", 156, "test string", 0x56, 0110");
+  printf("test %d %s %x %o \n", 156, "test string", 0x56, 0110);
   Exit(0);
 }

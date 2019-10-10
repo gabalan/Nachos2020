@@ -89,7 +89,7 @@ ExceptionHandler(ExceptionType which)
         {
           int returnCode = machine->ReadRegister(4);
           DEBUG('s', "Program ended with %d\n", returnCode);
-          interrupt->Halt();
+          interrupt->Halt(); // Placeholder before Part II
           break;
         }
       case SC_PutChar:

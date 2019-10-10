@@ -144,6 +144,8 @@ void PutChar(char c);
 void PutString(char c[]);
 void GetChar();
 void GetString(char *s, int n);
+void PutInt(int n);
+void GetInt(int* n);
 #endif //CHANGED
 
 #endif // IN_USER_MODE

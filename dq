@@ -1,0 +1,130 @@
+[33mcommit 72d687b892be2160cbc3b1046add51d3063f0b2b[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Tue Oct 8 12:56:44 2019 +0200
+
+    addd
+
+[33mcommit c42fdf102e71fd2cbc11632ffbe87261417cf917[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Tue Oct 8 12:13:21 2019 +0200
+
+     ajout de *return i* dans copyStringToMachine
+
+[33mcommit 975c2d89a958eddfd0b9284161c9981aec701427[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Sat Oct 5 15:55:45 2019 +0200
+
+    Fixed missing semicolon
+    Added PutInt,GetInt syscalls
+
+[33mcommit 4b80c6fc51d99826039442a1f5884a891f0ae6ec[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Sat Oct 5 00:10:54 2019 +0200
+
+    Added GetString syscall, copyStringToMachine, SynchConsole::GetString
+    Moved copyString functions to system.
+
+[33mcommit 79ba9df194f9a45be2d432ea0453da148406b7aa[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Fri Oct 4 10:38:03 2019 +0200
+
+    Fixed missing rename, removed useless file
+
+[33mcommit 6ba70164511e0abd39ede8598b8e88bb5554c6f7[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Oct 3 15:57:52 2019 +0200
+
+    Renamed SynchPutString syscall to PutString.
+    Added Exit syscall handler (Part VI).
+    Added GetChar syscall (Part VII.1)
+    Removed double deletes
+
+[33mcommit 6686b40dce9c00ca0abd2cd286140ffdc9e2f67c[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Oct 3 08:46:35 2019 +0200
+
+    Removed vscode folder
+
+[33mcommit d36a88b798a6e98c78253564cb537f8c1dddc9b7[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Oct 3 08:42:57 2019 +0200
+
+    Added vscode in gitignore
+
+[33mcommit 43a065113998cc2a0caa8006b2f09fe3b3115a40[m
+Author: sambegou <ts76diallo@gmail.com>
+Date:   Wed Oct 2 23:59:40 2019 +0200
+
+    putString
+
+[33mcommit 8e2155364c2b70e1fc7c3ea08c8880fa1345f5fa[m
+Author: sambegou <ts76diallo@gmail.com>
+Date:   Wed Oct 2 23:40:09 2019 +0200
+
+    add SynchPutString in Start.S
+
+[33mcommit 69a4d08250855213a95b6ed55b510a420ce460c0[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Wed Oct 2 21:12:54 2019 +0200
+
+    added PutString
+
+[33mcommit cf1f34d38c76150d789e96483af5542431361593[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Wed Oct 2 19:51:28 2019 +0200
+
+    add
+
+[33mcommit b6d299b9be87871edee64657042e053adb80e7c3[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Thu Sep 26 11:49:11 2019 +0200
+
+    edit progtest
+
+[33mcommit 4a087d0a0b6aa5206de6eb16a8e29267face9f30[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Sep 26 10:48:27 2019 +0200
+
+    fixed wrong CHANGED, removed wrong print of '>'
+
+[33mcommit ddfe4620ad1d3af9e57ea7eaf46e0fded60f93e3[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Sep 26 10:42:53 2019 +0200
+
+    added missing CHANGED instructions, moved <char> display in SynchConsoleTest
+
+[33mcommit 5070c41163c858944b8768ca386d5e002f4e5d11[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Sep 26 10:04:27 2019 +0200
+
+    Part III done
+
+[33mcommit 906205d4be65e561334bf4b943af4089efcf030f[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Thu Sep 19 12:00:26 2019 +0200
+
+    edit progtest
+
+[33mcommit 206cfa1b6ec216aa46cb386b3c2426986a7bd795[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Sep 19 11:05:31 2019 +0200
+
+    Updated .gitignore
+
+[33mcommit 82a6604ee192da5107a191371048043f3a49294c[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Sep 19 11:00:01 2019 +0200
+
+    Cleaned old Systeme folder
+
+[33mcommit ffb4f856a08da404c06ee3ce3b6c36ac331bded2[m
+Author: Nathan Lesne <nathan.lesne@etu.u-bordeaux.fr>
+Date:   Thu Sep 19 10:36:36 2019 +0200
+
+    Cleaned up, added gitignore
+
+[33mcommit 915cd5c5e335bec98c3bfab71ba92f29dda4fc29[m
+Author: Thierno Sambegou Diallo <tsdiallo001@emi.u-bordeaux1.fr>
+Date:   Thu Sep 19 10:28:14 2019 +0200
+
+    ll

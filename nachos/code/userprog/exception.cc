@@ -115,6 +115,10 @@ ExceptionHandler(ExceptionType which)
           DEBUG('a', "GetChar syscall");
           int c = synchconsole->SynchGetChar();
           machine->WriteRegister(2, c);
+          //test pour afficher le caractere saisi
+          synchconsole->SynchPutString("vous avez saisi le cacractere : ");
+          synchconsole->SynchPutChar(c);
+          synchconsole->SynchPutString("\n");
           break;
         }
       case SC_GetString:

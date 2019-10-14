@@ -33,11 +33,11 @@ int SynchConsole::SynchGetChar()
    int c = console->GetChar();
    return c;
 }
-void SynchConsole::SynchPutString(const char s[])
+void SynchConsole::SynchPutString(const char str[])
 {
   int i=0;
-  while (s[i]!='\0'){
-    SynchPutChar(s[i]);
+  while (str[i]!='\0'){
+    SynchPutChar(str[i]);
     i++;
   }
   

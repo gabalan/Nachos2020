@@ -1,4 +1,5 @@
 #ifdef CHANGED
+#include <cctype>
 #include "copyright.h"
 #include "console.h"
 #include "system.h"
@@ -65,11 +66,21 @@ void SynchConsole::SynchPutInt(int n)
   SynchPutString(str);
   delete[] str;
 }
-void SynchConsole::SynchGetInt(int *n)
+bool SynchConsole::SynchGetInt(int *n)
 {
   char* str = new char[MAX_INT_LENGTH];
   SynchGetString(str, MAX_INT_LENGTH);
-  sscanf(str, "%i", n);
+  bool isInt = true;
+  int i = 0;
+  // Testing if every char is a digit or a space
+  while (isInt && str[i] != '\0' && i < MAX_INT_LENGTH)
+    {
+      isInt = isdigit(str[i]) || isspace(str[i]);
+      i++;
+    }
+    if (isInt)
+      sscanf(str, "%i", n);
   delete[] str;
+  return isInt; // Returns true if input is an Integer
 }
 #endif // CHANGED

@@ -143,8 +143,10 @@ ExceptionHandler(ExceptionType which)
           DEBUG('s',"GetInt syscall\n");
           int to, n;
           to = machine->ReadRegister(4);
-          synchconsole->SynchGetInt(&n);
-          machine->WriteMem(to, sizeof(int), n);
+          bool isInteger = synchconsole->SynchGetInt(&n);
+          if (isInteger)
+            machine->WriteMem(to, sizeof(int), n);
+          machine->WriteRegister(2, isInteger);
           break;
         }
 #endif //CHANGED

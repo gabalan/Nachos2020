@@ -88,42 +88,38 @@ ExceptionHandler(ExceptionType which)
       case SC_Exit:
         {
           int returnCode = machine->ReadRegister(4);
-          DEBUG('s', "Program ended with %d\n", returnCode);
+          printf("User program exited with %d \n", returnCode);
           interrupt->Halt(); // Placeholder before Part II
           break;
         }
       case SC_PutChar:
         {
+          DEBUG('s', "PutChar syscall\n");
           int c = machine->ReadRegister(4);
-          DEBUG('s', "appel de la fonction SynchPutChar.\n");
           synchconsole->SynchPutChar(c);
-          DEBUG('s', "fin de l'appel de la fonction SynchPutChar.\n");
           break;
         }
       case SC_PutString:
         {
-          int c = machine->ReadRegister(4);
-          char *to = new char[MAX_STRING_SIZE + 1];
-          copyStringFromMachine(c, to, MAX_STRING_SIZE);
-          DEBUG('a', "appel système de la fonction SynchPutString\n");
+          DEBUG('s', "PutString syscall\n");
+          int str = machine->ReadRegister(4);
+          char *to = new char[MAX_STRING_SIZE];
+          copyStringFromMachine(str, to, MAX_STRING_SIZE);
           synchconsole->SynchPutString(to);
           delete[] to;
           break;
         }
       case SC_GetChar:
         {
-          DEBUG('a', "GetChar syscall");
+          DEBUG('s', "GetChar syscall\n");
           int c = synchconsole->SynchGetChar();
+          DEBUG('s', "Recieved %c char\n", (char)c);
           machine->WriteRegister(2, c);
-          //test pour afficher le caractere saisi
-          synchconsole->SynchPutString("vous avez saisi le cacractere : ");
-          synchconsole->SynchPutChar(c);
-          synchconsole->SynchPutString("\n");
           break;
         }
       case SC_GetString:
         {
-          DEBUG('a', "GetString syscall");
+          DEBUG('s', "GetString syscall\n");
           char* buf = new char[MAX_STRING_SIZE];
           int to = machine->ReadRegister(4);
           int size = machine->ReadRegister(5);
@@ -136,21 +132,19 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_PutInt:
         {
-          DEBUG('a',"Begin PutInt");
+          DEBUG('s',"PutInt syscall\n");
           int n;
           n = machine->ReadRegister(4);
           synchconsole->SynchPutInt(n);
-          DEBUG('a', "End PutInt");
           break;
         }
       case SC_GetInt:
         {
-          DEBUG('a',"Begin GetInt");
+          DEBUG('s',"GetInt syscall\n");
           int to, n;
           to = machine->ReadRegister(4);
           synchconsole->SynchGetInt(&n);
           machine->WriteMem(to, sizeof(int), n);
-          DEBUG('a', "End GetInt");
           break;
         }
 #endif //CHANGED

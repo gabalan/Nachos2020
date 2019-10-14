@@ -105,25 +105,25 @@ ExceptionHandler(ExceptionType which)
           int c = machine->ReadRegister(4);
           char *to = new char[MAX_STRING_SIZE + 1];
           copyStringFromMachine(c, to, MAX_STRING_SIZE);
-          DEBUG('a', "appel système de la fonction SynchPutString\n");
+          DEBUG('s', "appel système de la fonction SynchPutString\n");
           synchconsole->SynchPutString(to);
           delete[] to;
           break;
         }
       case SC_GetChar:
         {
-          DEBUG('a', "GetChar syscall");
+          DEBUG('s', "appel systeme getcchar \n:");
           int c = synchconsole->SynchGetChar();
           machine->WriteRegister(2, c);
           //test pour afficher le caractere saisi
-          synchconsole->SynchPutString("vous avez saisi le cacractere : ");
+        synchconsole->SynchPutString("vous avez saisi le cacractere : ");
           synchconsole->SynchPutChar(c);
           synchconsole->SynchPutString("\n");
           break;
         }
       case SC_GetString:
         {
-          DEBUG('a', "GetString syscall");
+          DEBUG('s', "appel systeme getcchar\n");
           char* buf = new char[MAX_STRING_SIZE];
           int to = machine->ReadRegister(4);
           int size = machine->ReadRegister(5);

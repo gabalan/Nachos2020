@@ -45,6 +45,9 @@ void SynchConsole::SynchPutString(const char str[])
 }
 void SynchConsole::SynchGetString(char *s, int n)
 {
+  if (n <= 0)
+    return;
+
   int i = 0;
   int c = 0;
   while (i < n && c != EOF && c != '\n')

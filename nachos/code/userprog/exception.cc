@@ -123,6 +123,12 @@ ExceptionHandler(ExceptionType which)
           int to = machine->ReadRegister(4);
           int size = machine->ReadRegister(5);
 
+          if (size <= 0)
+            {
+              printf("Cannot get %d characters, minimum is 1\n", size);
+              break;
+            }
+
           if (size > MAX_STRING_SIZE)
             {
               printf("Cannot get %d characters, maximum is %d\n", size, MAX_STRING_SIZE);

@@ -122,11 +122,12 @@ ExceptionHandler(ExceptionType which)
           DEBUG('s', "GetString syscall\n");
           int to = machine->ReadRegister(4);
           int size = machine->ReadRegister(5);
+          bool canProceed = true;
 
           if (size <= 0)
             {
               printf("Cannot get %d characters, minimum is 1\n", size);
-              break;
+              canProceed = false;
             }
 
           if (size > MAX_STRING_SIZE)
@@ -134,12 +135,15 @@ ExceptionHandler(ExceptionType which)
               printf("Cannot get %d characters, maximum is %d\n", size, MAX_STRING_SIZE);
               size = MAX_STRING_SIZE;
             }
-          char* buf = new char[size];
+            if (canProceed)
+              {
+                char* buf = new char[size];
 
-          synchconsole->SynchGetString(buf,size);
-          copyStringToMachine(buf, to, size);
+                synchconsole->SynchGetString(buf,size);
+                copyStringToMachine(buf, to, size);
 
-          delete[] buf;
+                delete[] buf;
+              }
           break;
         }
       case SC_PutInt:

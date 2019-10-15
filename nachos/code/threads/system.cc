@@ -249,9 +249,9 @@ Cleanup ()
 #ifdef USER_PROGRAM
 int copyStringFromMachine(int from, char *to, unsigned size)
 {
-  unsigned i=0;
+  unsigned i = 0;
   int res;
-  while ((i<size) && (machine->ReadMem(from+i,1,&res)))
+  while (i < size && (machine->ReadMem(from+i,1,&res)) && (char)res != '\0')
     {
       to[i]= (char)res;
       i++;

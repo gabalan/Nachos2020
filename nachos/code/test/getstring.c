@@ -1,12 +1,11 @@
 #include "syscall.h"
-#define size 256
-int // la valeur de retour d'un main est nécessairement un int sinon le compilateur génère une erreur
+int
 main ()
 {
-  char s[size+1];
-    GetString(s,size+1);
-    PutString(s); // à decommenter pour "echo"  la chaine saisie
-    /* not reached */
-  return 0;
+  int overflow_size = 32;
+  char s[overflow_size];
+  GetString(s,overflow_size); // value will be ignored and replaced by MAX_STRING_SIZE
+  PutString(s);
+  Exit(0);
 
 }

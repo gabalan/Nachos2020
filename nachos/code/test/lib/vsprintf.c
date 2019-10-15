@@ -418,13 +418,13 @@ int sprintf(char *buf, const char *fmt, ...)
   return i;
 }
 
-#define MAX_STRING_SIZE 256
+#define MAX_STRING_LENGTH 256
 
 int printf(const char* format, ...)
 {
-  char buffer[MAX_STRING_SIZE];
+  char buffer[MAX_STRING_LENGTH];
   va_list args;
-  int nb_written;
+  int nb_written; // for future buffering needs
 
   va_start(args, format);
   nb_written = vsprintf(buffer, format, args);

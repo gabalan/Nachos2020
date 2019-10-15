@@ -120,9 +120,15 @@ ExceptionHandler(ExceptionType which)
       case SC_GetString:
         {
           DEBUG('s', "GetString syscall\n");
-          char* buf = new char[MAX_STRING_SIZE];
           int to = machine->ReadRegister(4);
           int size = machine->ReadRegister(5);
+
+          if (size > MAX_STRING_SIZE)
+            {
+              printf("Cannot get %d characters, maximum is %d\n", size, MAX_STRING_SIZE);
+              size = MAX_STRING_SIZE;
+            }
+          char* buf = new char[size];
 
           synchconsole->SynchGetString(buf,size);
           copyStringToMachine(buf, to, size);

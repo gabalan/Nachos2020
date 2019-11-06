@@ -19,6 +19,8 @@ class SynchConsole: dontcopythis {
 
  private:
   Console *console;
+  Semaphore* readLock;
+  Semaphore* writeLock;
 };
 #endif // SYNCHCONSOLE_H
 #endif // CHANGED

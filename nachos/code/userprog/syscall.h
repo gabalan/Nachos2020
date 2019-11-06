@@ -33,12 +33,16 @@
 #define SC_Yield	10
 
 #ifdef CHANGED
+// Devoir 1
 #define SC_PutChar 11
 #define SC_PutString 12
 #define SC_GetChar 13
 #define SC_GetString 14
 #define SC_PutInt 15
 #define SC_GetInt 16
+// Part II
+#define SC_ThreadCreate 17
+#define SC_ThreadExit 18
 #endif //CHANGED
 
 
@@ -140,12 +144,17 @@ void Fork (void (*func) ());
  */
 void Yield ();
 #ifdef CHANGED
+// Part I
 void PutChar(char c);
 void PutString(char str[]);
 int GetChar();
 void GetString(char *s, int n);
 void PutInt(int n);
 int GetInt(int* n);
+// Part II
+int ThreadCreate(void f(void *arg), void *arg);
+void ThreadExit(void);
+
 #endif //CHANGED
 
 #endif // IN_USER_MODE

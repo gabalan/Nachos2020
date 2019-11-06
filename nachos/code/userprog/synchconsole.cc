@@ -15,6 +15,9 @@ SynchConsole::SynchConsole(const char *in, const char *out)
     readAvail = new Semaphore("read avail", 0);
     writeDone = new Semaphore("write done", 0);
     console   =  new Console (in, out,ReadAvailHandler ,WriteDoneHandler, 0);
+
+    readLock = new Semaphore("GetChar", 1);
+    writeLock = new Semaphore("PutChar", 1);
 }
 SynchConsole::~SynchConsole()
 {
@@ -24,14 +27,17 @@ SynchConsole::~SynchConsole()
 }
 void SynchConsole::SynchPutChar(int ch)
 {
+  writeLock->P();
   console->PutChar(ch);
   writeDone->P();
-	
+  writeLock->V();
 }
 int SynchConsole::SynchGetChar()
 {
+   readLock->P();
    readAvail->P();
    int c = console->GetChar();
+   readLock->V();
    return c;
 }
 void SynchConsole::SynchPutString(const char str[])

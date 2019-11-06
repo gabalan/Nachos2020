@@ -26,6 +26,7 @@
 #include "syscall.h"
 #ifdef CHANGED
 #include "synchconsole.h"
+#include "userthread.h"
 #endif // CHANGED
 
 //----------------------------------------------------------------------
@@ -149,8 +150,7 @@ ExceptionHandler(ExceptionType which)
       case SC_PutInt:
         {
           DEBUG('s',"PutInt syscall\n");
-          int n;
-          n = machine->ReadRegister(4);
+          int n = machine->ReadRegister(4);
           synchconsole->SynchPutInt(n);
           break;
         }
@@ -163,6 +163,25 @@ ExceptionHandler(ExceptionType which)
           if (isInteger)
             machine->WriteMem(to, sizeof(int), n);
           machine->WriteRegister(2, isInteger);
+          break;
+        }
+      case SC_ThreadCreate:
+        {
+          DEBUG('s', "ThreadCreate syscall\n");
+          int f, arg;
+          f = machine->ReadRegister(4);
+          arg = machine->ReadRegister(5);
+          if (do_ThreadCreate(f,arg) != -1)
+            DEBUG('s', "Thread created\n");
+          else
+            DEBUG('s', "Thread creation failed\n");
+
+          break;
+        }
+      case SC_ThreadExit:
+        {
+          DEBUG('s', "ThreadExit syscall\n");
+          do_ThreadExit();
           break;
         }
 #endif //CHANGED

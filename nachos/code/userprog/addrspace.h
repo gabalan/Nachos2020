@@ -22,7 +22,7 @@
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
 #ifdef CHANGED
-#define UserThreadStackSize 128
+#define UserThreadStackSize 256
 #endif // CHANGED
 
 

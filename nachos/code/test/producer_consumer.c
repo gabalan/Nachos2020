@@ -2,6 +2,19 @@
 // Created by nlesne on 18/10/2019.
 //
 
+/*
+ * Ce programme de test implémente le problème producteur-consommateur
+ * à l'aide de sémaphores et de plusieurs threads
+ * Le programme principal lance THREAD_PAIRS de producteurs et consomateurs
+ * qui vont produire/consomer DATA_LENGTH entiers (de 0 à DATA_LENGTH)
+ * Il attend ensuite que tout les consommateurs aient terminés avant de s'arrêter
+ *
+ * a lancer avec ./nachos -x test/producer_consumer dans userprog
+ * Avec l'implémentation courante 1 seule paire de thread est supportée.
+ *
+ * Dans userprog lancer ce programme avec ./nachos -x test/producer_consumer
+ */
+
 #include "syscall.h"
 #include "lib/vsprintf.h"
 

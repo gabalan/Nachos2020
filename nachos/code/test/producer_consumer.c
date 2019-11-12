@@ -20,11 +20,11 @@
 
 #define DATA_LENGTH 50
 #define THREAD_PAIRS 1
-int buffer;
-sem_t cons;
-sem_t prod;
-sem_t mutex;
-sem_t cons_done;
+static int buffer;
+static sem_t cons;
+static sem_t prod;
+static sem_t mutex;
+static sem_t cons_done;
 
 void producer()
 {

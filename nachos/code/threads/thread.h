@@ -84,7 +84,7 @@ class Thread:dontcopythis
     unsigned long machineState[MachineStateSize];	// all registers except for stackTop
 
   public:
-      Thread (const char *debugName);	// initialize a Thread 
+      Thread (const char *debugName);	// initialize a Thread
      ~Thread ();		// deallocate a Thread
     // NOTE -- thread being deleted
     // must not be running when delete 
@@ -145,6 +145,9 @@ class Thread:dontcopythis
     void RestoreUserState ();	// restore user-level register state
 
     AddrSpace *space;		// User code this thread is running.
+#ifdef CHANGED
+    int bitmapLocation;
+#endif //CHANGED
 #endif
 };
 

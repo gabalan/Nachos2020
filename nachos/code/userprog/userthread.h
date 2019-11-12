@@ -12,13 +12,13 @@
 struct Thread_args {
     int f;
     int arg;
-    Thread_args(int new_f, int new_arg)
-      : f(new_f), arg(new_arg) {}
+    int exit_func;
+    Thread_args(int new_f, int new_arg, int new_exit_func)
+      : f(new_f), arg(new_arg), exit_func(new_exit_func) {}
 };
 
 extern int numActiveThreads;
-extern int do_ThreadCreate(int f, int arg);
-static void StartUserThread(void *schmurtz);
+extern int do_ThreadCreate(int f, int arg, int exit_func);
 extern void do_ThreadExit();
 
 #endif //_USERTHREAD_H_

@@ -201,6 +201,7 @@ GetInt:
     .ent  ThreadCreate
 ThreadCreate:
     addiu $2,$0,SC_ThreadCreate
+    addiu $6,$0,ThreadExit
     syscall
     j	$31
     .end ThreadCreate
@@ -213,7 +214,37 @@ ThreadExit:
     j	$31
     .end ThreadExit
 
+    .globl SemInit
+    .ent  SemInit
+SemInit:
+    addiu $2,$0,SC_SemInit
+    syscall
+    j	$31
+    .end SemInit
 
+    .globl SemDestroy
+    .ent  SemDestroy
+SemDestroy:
+     addiu $2,$0,SC_SemDestroy
+     syscall
+     j	$31
+     .end SemDestroy
+
+    .globl SemWait
+    .ent  SemWait
+SemWait:
+     addiu $2,$0,SC_SemWait
+     syscall
+     j	$31
+     .end SemWait
+
+    .globl SemPost
+    .ent  SemPost
+SemPost:
+     addiu $2,$0,SC_SemPost
+     syscall
+     j	$31
+     .end SemPost
 
 
 #endif //CHANGED

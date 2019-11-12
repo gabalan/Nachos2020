@@ -27,6 +27,7 @@
 #ifdef CHANGED
 #include "synchconsole.h"
 #include "userthread.h"
+#include "usersemaphore.h"
 #endif // CHANGED
 
 //----------------------------------------------------------------------
@@ -90,7 +91,7 @@ ExceptionHandler(ExceptionType which)
         {
           int returnCode = machine->ReadRegister(4);
           printf("User program exited with %d \n", returnCode);
-          interrupt->Halt(); // Placeholder before Part II
+          do_ThreadExit();
           break;
         }
       case SC_PutChar:
@@ -142,7 +143,6 @@ ExceptionHandler(ExceptionType which)
 
                 synchconsole->SynchGetString(buf,size);
                 copyStringToMachine(buf, to, size);
-
                 delete[] buf;
               }
           break;
@@ -168,13 +168,17 @@ ExceptionHandler(ExceptionType which)
       case SC_ThreadCreate:
         {
           DEBUG('s', "ThreadCreate syscall\n");
-          int f, arg;
+          int f, arg, exit_func;
           f = machine->ReadRegister(4);
           arg = machine->ReadRegister(5);
-          if (do_ThreadCreate(f,arg) != -1)
+          exit_func = machine->ReadRegister(6);
+          if (do_ThreadCreate(f,arg,exit_func) != -1)
             DEBUG('s', "Thread created\n");
           else
-            DEBUG('s', "Thread creation failed\n");
+            {
+              DEBUG('s', "Thread creation failed\n");
+              printf("User stack full cannot create more threads\n");
+            }
 
           break;
         }
@@ -182,6 +186,44 @@ ExceptionHandler(ExceptionType which)
         {
           DEBUG('s', "ThreadExit syscall\n");
           do_ThreadExit();
+          break;
+        }
+      case SC_SemInit:
+        {
+          DEBUG('s', "SemInit syscall\n");
+          int value = machine->ReadRegister(4);
+          sem_t semId = do_semInit(value);
+          machine->WriteRegister(2,semId);
+          break;
+        }
+      case SC_SemDestroy:
+        {
+          DEBUG('s', "SemDestroy syscall\n");
+          int semId = machine->ReadRegister(4);
+          int returnValue = do_semDestroy(semId);
+          if (returnValue == -1)
+            DEBUG('s', "sem_t hasn't been initialised\n");
+          machine->WriteRegister(2,returnValue);
+          break;
+        }
+      case SC_SemWait:
+        {
+          DEBUG('s', "SemWait syscall\n");
+          int semId = machine->ReadRegister(4);
+          int returnValue = do_semWait(semId);
+          if (returnValue == -1)
+            DEBUG('s', "sem_t hasn't been initialised\n");
+          machine->WriteRegister(2,returnValue);
+          break;
+        }
+      case SC_SemPost:
+        {
+          DEBUG('s', "SemPost syscall\n");
+          int semId = machine->ReadRegister(4);
+          int returnValue = do_semPost(semId);
+          if (returnValue == -1)
+            DEBUG('s', "sem_t hasn't been initialised\n");
+          machine->WriteRegister(2,returnValue);
           break;
         }
 #endif //CHANGED

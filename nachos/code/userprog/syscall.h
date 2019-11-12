@@ -40,9 +40,15 @@
 #define SC_GetString 14
 #define SC_PutInt 15
 #define SC_GetInt 16
-// Part II
+// Devoir 2
 #define SC_ThreadCreate 17
 #define SC_ThreadExit 18
+
+#define sem_t int
+#define SC_SemInit 19
+#define SC_SemDestroy 20
+#define SC_SemWait 21
+#define SC_SemPost 22
 #endif //CHANGED
 
 
@@ -154,6 +160,11 @@ int GetInt(int* n);
 // Part II
 int ThreadCreate(void f(void *arg), void *arg);
 void ThreadExit(void);
+
+sem_t SemInit(int value);
+int SemDestroy(sem_t sem);
+int SemWait(sem_t sem); // P()
+int SemPost(sem_t sem); // V()
 
 #endif //CHANGED
 

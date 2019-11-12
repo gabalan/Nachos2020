@@ -217,7 +217,6 @@ Cleanup ()
 #ifdef USER_PROGRAM
     #ifdef CHANGED
         delete synchconsole;
-        synchconsole=NULL;
     #endif //CHANGED
 
     delete machine;

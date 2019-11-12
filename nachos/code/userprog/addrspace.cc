@@ -126,6 +126,11 @@ AddrSpace::AddrSpace (OpenFile * executable)
     DEBUG ('a', "Area for stacks at 0x%x, size 0x%x\n",
 	   size - UserStacksAreaSize, UserStacksAreaSize);
 
+#ifdef CHANGED
+    threadStackLocations = new BitMap(UserStacksAreaSize / UserThreadStackSize);
+    AllocateUserStack(&currentThread->bitmapLocation);
+#endif // CHANGED
+
     pageTable[0].valid = FALSE;			// Catch NULL dereference
 
     AddrSpaceList.Append(this);
@@ -141,6 +146,9 @@ AddrSpace::~AddrSpace ()
   // LB: Missing [] for delete
   // delete pageTable;
   delete [] pageTable;
+#ifdef CHANGED
+  delete threadStackLocations;
+#endif //CHANGED
   // End of modification
 
   AddrSpaceList.Remove(this);
@@ -294,9 +302,27 @@ AddrSpace::RestoreState ()
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
 }
+
 #ifdef CHANGED
-int AddrSpace::AllocateUserStack()
+int AddrSpace::AllocateUserStack(int* bitmapLocation)
 {
-  return numPages * PageSize - 256;
+  int bitmapBit = threadStackLocations->Find();
+  *bitmapLocation = bitmapBit;
+  if (bitmapBit == -1)
+    return -1; // No free space for more stacks
+  return numPages * PageSize - (UserThreadStackSize * bitmapBit);
+}
+
+void AddrSpace::DeallocateUserStack(int bitmapLocation)
+{
+  threadStackLocations->Clear(bitmapLocation);
+}
+int AddrSpace::getNumThreads()
+{
+  return threadStackLocations->NumSet();
+}
+bool AddrSpace::isStackFull()
+{
+  return threadStackLocations->NumClear() == 0;
 }
 #endif // CHANGED

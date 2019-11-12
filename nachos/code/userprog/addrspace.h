@@ -18,8 +18,13 @@
 #include "translate.h"
 #include "noff.h"
 #include "list.h"
+#include "bitmap.h"
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
+#ifdef CHANGED
+#define UserThreadStackSize 128
+#endif // CHANGED
+
 
 class AddrSpace:dontcopythis
 {
@@ -33,7 +38,10 @@ class AddrSpace:dontcopythis
     // before jumping to user code
 
 #ifdef CHANGED
-    int AllocateUserStack();
+    int AllocateUserStack(int* bitmapLocation);
+    void DeallocateUserStack(int bitmapLocation);
+    int getNumThreads();
+    bool isStackFull();
 #endif
 
     void SaveState ();		// Save/restore address space-specific
@@ -50,8 +58,10 @@ class AddrSpace:dontcopythis
 
     TranslationEntry * pageTable; // Page table
     unsigned int numPages;	// Number of pages in the page table
+#ifdef CHANGED
+    BitMap* threadStackLocations;
+#endif // CHANGED
 };
-
 extern List AddrspaceList;
 
 #endif // ADDRSPACE_H

@@ -127,6 +127,19 @@ BitMap::NumClear ()
     return count;
 }
 
+#ifdef CHANGED
+//----------------------------------------------------------------------
+// BitMap::NumSet
+//      Returns the number of bits set.
+//----------------------------------------------------------------------
+
+int
+BitMap::NumSet ()
+{
+  return numBits - NumClear();
+}
+#endif //CHANGED
+
 //----------------------------------------------------------------------
 // BitMap::Print
 //      Print the contents of the bitmap, for debugging.

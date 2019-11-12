@@ -80,7 +80,7 @@ bool SynchConsole::SynchGetInt(int *n)
   char* str = new char[MAX_INT_LENGTH];
   SynchGetString(str, MAX_INT_LENGTH);
   bool isInt = true;
-  int i = 0;
+  unsigned int i = 0;
   // Testing if every char is a digit or a space
   while (isInt && str[i] != '\0' && i < MAX_INT_LENGTH)
     {

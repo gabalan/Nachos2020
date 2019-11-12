@@ -165,9 +165,6 @@ Thread::CheckOverflow ()
 //      between setting threadToBeDestroyed, and going to sleep.
 //----------------------------------------------------------------------
 
-
-//////////COUCOU
-//
 void
 Thread::Finish ()
 {

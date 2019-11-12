@@ -41,6 +41,9 @@ class BitMap:dontcopythis
     // effect, set the bit. 
     // If no bits are clear, return -1.
     int NumClear ();		// Return the number of clear bits
+#ifdef CHANGED
+    int NumSet ();         // Return the total number of bits
+#endif //CHANGED
 
     void Print ();		// Print contents of bitmap
 

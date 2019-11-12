@@ -96,15 +96,15 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_PutChar:
         {
-          DEBUG('s', "PutChar syscall\n");
           int c = machine->ReadRegister(4);
+          DEBUG('s', "PutChar syscall char: %c\n",c);
           synchconsole->SynchPutChar(c);
           break;
         }
       case SC_PutString:
         {
-          DEBUG('s', "PutString syscall\n");
           int str = machine->ReadRegister(4);
+          DEBUG('s', "PutString syscall str: %s\n",str);
           char *to = new char[MAX_STRING_SIZE];
           copyStringFromMachine(str, to, MAX_STRING_SIZE);
           synchconsole->SynchPutString(to);
@@ -149,8 +149,8 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_PutInt:
         {
-          DEBUG('s',"PutInt syscall\n");
           int n = machine->ReadRegister(4);
+          DEBUG('s',"PutInt syscall value: %d\n",n);
           synchconsole->SynchPutInt(n);
           break;
         }
@@ -167,9 +167,9 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_ThreadCreate:
         {
-          DEBUG('s', "ThreadCreate syscall\n");
           int f, arg, exit_func;
           f = machine->ReadRegister(4);
+          DEBUG('s', "ThreadCreate syscall f: %d\n",f);
           arg = machine->ReadRegister(5);
           exit_func = machine->ReadRegister(6);
           if (do_ThreadCreate(f,arg,exit_func) != -1)
@@ -190,16 +190,16 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_SemInit:
         {
-          DEBUG('s', "SemInit syscall\n");
           int value = machine->ReadRegister(4);
+          DEBUG('s', "SemInit syscall initial value: %d\n",value);
           sem_t semId = do_semInit(value);
           machine->WriteRegister(2,semId);
           break;
         }
       case SC_SemDestroy:
         {
-          DEBUG('s', "SemDestroy syscall\n");
           int semId = machine->ReadRegister(4);
+          DEBUG('s', "SemDestroy syscall id: %d\n",semId);
           int returnValue = do_semDestroy(semId);
           if (returnValue == -1)
             DEBUG('s', "sem_t hasn't been initialised\n");
@@ -208,8 +208,8 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_SemWait:
         {
-          DEBUG('s', "SemWait syscall\n");
           int semId = machine->ReadRegister(4);
+          DEBUG('s', "SemWait syscall id: %d\n",semId);
           int returnValue = do_semWait(semId);
           if (returnValue == -1)
             DEBUG('s', "sem_t hasn't been initialised\n");
@@ -218,8 +218,8 @@ ExceptionHandler(ExceptionType which)
         }
       case SC_SemPost:
         {
-          DEBUG('s', "SemPost syscall\n");
           int semId = machine->ReadRegister(4);
+          DEBUG('s', "SemPost syscall id: %d\n",semId);
           int returnValue = do_semPost(semId);
           if (returnValue == -1)
             DEBUG('s', "sem_t hasn't been initialised\n");

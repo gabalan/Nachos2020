@@ -1,9 +1,9 @@
-// addrspace.cc 
+// addrspace.cc
 //      Routines to manage address spaces (executing user programs).
 //
 //      In order to run a user program, you must:
 //
-//      1. link with the -N -T 0 option 
+//      1. link with the -N -T 0 option
 //      2. run coff2noff to convert the object file to Nachos format
 //              (Nachos object code format is essentially just a simpler
 //              version of the UNIX executable object code format)
@@ -12,7 +12,7 @@
 //              don't need to do this last step)
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #include "copyright.h"
@@ -22,9 +22,14 @@
 #include "syscall.h"
 #include "new"
 
+#ifdef CHANGED
+
+static void ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes, int position,
+TranslationEntry *pageTable, unsigned numPages);
+#endif
 //----------------------------------------------------------------------
 // SwapHeader
-//      Do little endian to big endian conversion on the bytes in the 
+//      Do little endian to big endian conversion on the bytes in the
 //      object file header, in case the file was generated on a little
 //      endian machine, and we're now running on a big endian machine.
 //----------------------------------------------------------------------
@@ -59,7 +64,7 @@ List AddrSpaceList;
 //
 //      Assumes that the object code file is in NOFF format.
 //
-//      First, set up the translation from program memory to physical 
+//      First, set up the translation from program memory to physical
 //      memory.  For now, this is really simple (1:1), since we are
 //      only uniprogramming, and we have a single unsegmented page table
 //
@@ -71,6 +76,9 @@ AddrSpace::AddrSpace (OpenFile * executable)
     unsigned int i, size;
 
     executable->ReadAt (&noffH, sizeof (noffH), 0);
+  //  #ifdef
+    //ReadAtVirtual(executable,noffH,sizeof (noffH),0,machine->pageTable,machine->pageTableSize);
+    //#endif
     if ((noffH.noffMagic != NOFFMAGIC) &&
 	(WordToHost (noffH.noffMagic) == NOFFMAGIC))
 	SwapHeader (&noffH);
@@ -92,16 +100,16 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
     DEBUG ('a', "Initializing address space, num pages %d, total size 0x%x\n",
 	   numPages, size);
-// first, set up the translation 
+// first, set up the translation
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
-	  pageTable[i].physicalPage = i;	// for now, phys page # = virtual page #
+	  pageTable[i].physicalPage = i+1;	// for now, phys page # = virtual page #
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
-	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
-	  // a separate page, we could set its 
+	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on
+	  // a separate page, we could set its
 	  // pages to be read-only
       }
 
@@ -110,18 +118,26 @@ AddrSpace::AddrSpace (OpenFile * executable)
       {
 	  DEBUG ('a', "Initializing code segment, at 0x%x, size 0x%x\n",
 		 noffH.code.virtualAddr, noffH.code.size);
-	  executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
-			      noffH.code.size, noffH.code.inFileAddr);
+	 /* executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
+			      noffH.code.size, noffH.code.inFileAddr);*/
+          #ifdef CHANGED
+          ReadAtVirtual(executable,noffH.code.virtualAddr,noffH.code.size,noffH.code.inFileAddr,pageTable,numPages);
+          #endif
       }
     if (noffH.initData.size > 0)
       {
 	  DEBUG ('a', "Initializing data segment, at 0x%x, size 0x%x\n",
 		 noffH.initData.virtualAddr, noffH.initData.size);
-	  executable->ReadAt (&
+	  /*executable->ReadAt (&
 			      (machine->mainMemory
 			       [noffH.initData.virtualAddr]),
 			      noffH.initData.size, noffH.initData.inFileAddr);
+            */
+      #ifdef CHANGED
+      ReadAtVirtual(executable,noffH.initData.virtualAddr,noffH.initData.size,noffH.initData.inFileAddr,pageTable,numPages);
+      #endif
       }
+
 
     DEBUG ('a', "Area for stacks at 0x%x, size 0x%x\n",
 	   size - UserStacksAreaSize, UserStacksAreaSize);
@@ -324,5 +340,25 @@ int AddrSpace::getNumThreads()
 bool AddrSpace::isStackFull()
 {
   return threadStackLocations->NumClear() == 0;
+}
+
+static void ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes, int position,
+TranslationEntry *pageTable, unsigned numPages){
+
+  char buf[numBytes];
+  int sizeBufRed=executable->ReadAt(buf,numBytes,position);
+  //Copy
+  TranslationEntry *pageTableTmp=machine->pageTable;
+  unsigned numPagesTmp=  machine->pageTableSize;
+  //WriteMem
+  machine->pageTable =pageTable;
+  machine->pageTableSize = numPages;
+  for(int i=0;i<sizeBufRed;i++) {
+    machine->WriteMem(virtualaddr+i, 1, *(buf+i));
+  }
+  //Restore
+  machine->pageTable = pageTableTmp;
+  machine->pageTableSize = numPagesTmp;
+
 }
 #endif // CHANGED

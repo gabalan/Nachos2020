@@ -106,10 +106,9 @@ ExceptionHandler(ExceptionType which)
         {
           int str = machine->ReadRegister(4);
           DEBUG('s', "PutString syscall str: %s\n",str);
-          char *to = new char[MAX_STRING_SIZE];
+          char to[MAX_STRING_SIZE];
           copyStringFromMachine(str, to, MAX_STRING_SIZE);
           synchconsole->SynchPutString(to);
-          delete[] to;
           break;
         }
       case SC_GetChar:
@@ -140,11 +139,9 @@ ExceptionHandler(ExceptionType which)
             }
             if (canProceed)
               {
-                char* buf = new char[size];
-
+                char buf[size];
                 synchconsole->SynchGetString(buf,size);
                 copyStringToMachine(buf, to, size);
-                delete[] buf;
               }
           break;
         }

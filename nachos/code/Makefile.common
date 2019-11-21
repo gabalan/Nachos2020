@@ -44,7 +44,8 @@ NETWORK_O	:=	nettest.o post.o network.o
 
 S_OFILES	:=	switch.o
 
-CFLAGS = -g -Wall -Wextra -Wshadow $(INCPATH) $(DEFINES) $(HOST) -DCHANGED 
+CFLAGS = -g -Wall -Wextra -Wshadow -fsanitize=address $(INCPATH) $(DEFINES) $(HOST) -DCHANGED
+LDFLAGS = -fsanitize=address
 
 # These definitions may change as the software is updated.
 # Some of them are also system dependent

@@ -28,6 +28,7 @@
 #include "synchconsole.h"
 #include "userthread.h"
 #include "usersemaphore.h"
+#include "userfork.h"
 #endif // CHANGED
 
 //----------------------------------------------------------------------
@@ -226,6 +227,15 @@ ExceptionHandler(ExceptionType which)
           machine->WriteRegister(2,returnValue);
           break;
         }
+      case SC_ForkExec :
+      {
+        int value = machine->ReadRegister(4);
+        char* to = new char[MAX_STRING_SIZE+1]; 
+        copyStringFromMachine(value, to, MAX_STRING_SIZE);
+         do_ForkExec(to);
+        break;
+
+      }
 #endif //CHANGED
       default:
         {

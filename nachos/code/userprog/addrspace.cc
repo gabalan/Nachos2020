@@ -21,6 +21,7 @@
 #include "noff.h"
 #include "syscall.h"
 #include "new"
+#include <strings.h>
 
 #ifdef CHANGED
 
@@ -104,7 +105,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
-	  pageTable[i].physicalPage = i+1;	// for now, phys page # = virtual page #
+    pageTable[i].virtualPage = i;
+    #ifdef CHANGED
+	  pageTable[i].physicalPage =machine->pagepr->GetEmptyPage();	//i+1
+    #endif //CHANGED
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
@@ -150,6 +154,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable[0].valid = FALSE;			// Catch NULL dereference
 
     AddrSpaceList.Append(this);
+    machine->DumpMem("fork.svg");
 }
 
 //----------------------------------------------------------------------
@@ -164,6 +169,10 @@ AddrSpace::~AddrSpace ()
   delete [] pageTable;
 #ifdef CHANGED
   delete threadStackLocations;
+
+  for (unsigned i = 0; i < numPages; i++){
+    machine->pagepr->ReleasePage(pageTable[i].physicalPage);
+  }
 #endif //CHANGED
   // End of modification
 
@@ -346,14 +355,16 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes, i
 TranslationEntry *pageTable, unsigned numPages){
 
   char buf[numBytes];
-  int sizeBufRed=executable->ReadAt(buf,numBytes,position);
+  int sizeBufRead=executable->ReadAt(buf,numBytes,position);
+  ASSERT(numPages*PageSize>(unsigned)virtualaddr+sizeBufRead);
+  ASSERT(numBytes==sizeBufRead);
   //Copy
   TranslationEntry *pageTableTmp=machine->pageTable;
   unsigned numPagesTmp=  machine->pageTableSize;
   //WriteMem
   machine->pageTable =pageTable;
   machine->pageTableSize = numPages;
-  for(int i=0;i<sizeBufRed;i++) {
+  for(int i=0;i<sizeBufRead;i++) {
     machine->WriteMem(virtualaddr+i, 1, *(buf+i));
   }
   //Restore

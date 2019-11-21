@@ -49,6 +49,8 @@
 #define SC_SemDestroy 20
 #define SC_SemWait 21
 #define SC_SemPost 22
+//Devoir 3
+#define SC_ForkExec 23
 #endif //CHANGED
 
 
@@ -165,6 +167,7 @@ sem_t SemInit(int value);
 int SemDestroy(sem_t sem);
 int SemWait(sem_t sem); // P()
 int SemPost(sem_t sem); // V()
+int ForkExec(const char *s);
 
 #endif //CHANGED
 

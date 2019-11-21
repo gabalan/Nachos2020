@@ -24,6 +24,8 @@ SynchConsole::~SynchConsole()
     delete console;
     delete writeDone;
     delete readAvail;
+    delete readLock;
+    delete writeLock;
 }
 void SynchConsole::SynchPutChar(int ch)
 {
@@ -56,7 +58,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 
   int i = 0;
   int c = 0;
-  while (i < n && c != EOF && c != '\n')
+  while (i < n - 1 && c != EOF && c != '\n')
     {
       c = SynchGetChar();
       s[i] = (char)c;
@@ -70,14 +72,13 @@ void SynchConsole::SynchGetString(char *s, int n)
 }
 void SynchConsole::SynchPutInt(int n)
 {
-  char* str = new char[MAX_INT_LENGTH];
+  char str[MAX_INT_LENGTH];
   snprintf(str, MAX_INT_LENGTH, "%i", n);
   SynchPutString(str);
-  delete[] str;
 }
 bool SynchConsole::SynchGetInt(int *n)
 {
-  char* str = new char[MAX_INT_LENGTH];
+  char str[MAX_INT_LENGTH];
   SynchGetString(str, MAX_INT_LENGTH);
   bool isInt = true;
   unsigned int i = 0;
@@ -89,7 +90,6 @@ bool SynchConsole::SynchGetInt(int *n)
     }
     if (isInt)
       sscanf(str, "%i", n);
-  delete[] str;
   return isInt; // Returns true if input is an Integer
 }
 #endif // CHANGED

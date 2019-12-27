@@ -42,7 +42,8 @@ extern Machine *machine;	// user program memory and registers
 #include "synchconsole.h"
 
 extern SynchConsole *synchconsole;
-
+extern PageProvider* pagepr;
+extern int nbProcess;
 int copyStringFromMachine(int from, char *to, unsigned size);
 int copyStringToMachine(char* from, int to, unsigned size);
 #endif //CHANGED

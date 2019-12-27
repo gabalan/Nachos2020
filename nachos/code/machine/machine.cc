@@ -61,9 +61,6 @@ Machine::Machine(bool debug)
         registers[i] = 0;
     mainMemory = new char[MemorySize];
 
-	#ifdef CHANGED
-    pagepr= new PageProvider((int)(MemorySize/PageSize));
-	#endif //CHANGED
     for (i = 0; i < MemorySize; i++)
       	mainMemory[i] = 0;
 #ifdef USE_TLB
@@ -91,9 +88,6 @@ Machine::~Machine()
     delete [] mainMemory;
     if (tlb != NULL)
         delete [] tlb;
-  #ifdef CHANGED
-        delete pagepr;
-  #endif //CHANGED
 }
 
 //----------------------------------------------------------------------

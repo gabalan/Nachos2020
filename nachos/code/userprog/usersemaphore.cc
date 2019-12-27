@@ -12,7 +12,7 @@ void testAndResize()
 {
   if (nextSemId >= semListCapacity)
     {
-      semListCapacity += 10;
+      semListCapacity *= 2;
       semList = (Semaphore**)realloc(semList, semListCapacity * sizeof(Semaphore*));
     }
 }
@@ -21,7 +21,7 @@ unsigned int do_semInit(int value)
   testAndResize();
   char semName[20] = "userSem_";
   char id_string[10];
-  sprintf(id_string, "%d", nextSemId);
+  snprintf(id_string, 10, "%d", nextSemId);
   strcat(semName, id_string);
   semList[nextSemId] = new Semaphore(semName,value);
   return nextSemId++;

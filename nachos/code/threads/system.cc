@@ -35,6 +35,8 @@ SynchDisk *synchDisk;
 Machine *machine;		// user program memory and registers
 #ifdef CHANGED
 SynchConsole *synchconsole=NULL;
+PageProvider* pagepr = nullptr;
+int nbProcess = 0;
 #endif
 #endif
 
@@ -181,6 +183,10 @@ Initialize (int argc, char **argv)
 
 #ifdef USER_PROGRAM
     machine = new Machine (debugUserProg);	// this must come first
+#ifdef CHANGED
+    pagepr = new PageProvider((int)(MemorySize/PageSize));
+    nbProcess = 1;
+#endif // CHANGED
 #endif
 
 #ifdef FILESYS
@@ -217,6 +223,7 @@ Cleanup ()
 #ifdef USER_PROGRAM
     #ifdef CHANGED
         delete synchconsole;
+        delete pagepr;
     #endif //CHANGED
 
     delete machine;

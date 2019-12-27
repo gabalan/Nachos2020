@@ -42,10 +42,11 @@ class AddrSpace:dontcopythis
     void DeallocateUserStack(int bitmapLocation);
     int getNumThreads();
     bool isStackFull();
+    void finishThreads();
 #endif
 
     void SaveState ();		// Save/restore address space-specific
-    void RestoreState ();	// info on a context switch 
+    void RestoreState ();	// info on a context switch
 
     unsigned Dump(FILE *output, unsigned virtual_x, unsigned virtual_width,
 		    unsigned physical_x, unsigned virtual_y, unsigned y,
@@ -59,6 +60,7 @@ class AddrSpace:dontcopythis
     TranslationEntry * pageTable; // Page table
     unsigned int numPages;	// Number of pages in the page table
 #ifdef CHANGED
+    List threadList;
     BitMap* threadStackLocations;
 #endif // CHANGED
 };

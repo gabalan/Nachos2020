@@ -4,6 +4,7 @@
 //
 
 #include "userthread.h"
+#include "userfork.h"
 
 static void StartUserThread(void *schmurtz);
 
@@ -40,10 +41,12 @@ void StartUserThread(void *schmurtz)
 void do_ThreadExit()
 {
   currentThread->space->DeallocateUserStack(currentThread->bitmapLocation);
-  if (currentThread->space->getNumThreads() > 0)
-    currentThread->Finish();
-  else
-    interrupt->Halt();
+  if (currentThread->space->getNumThreads() == 0)
+    {
+      nbProcess--;
+      //delete currentThread->space;
+    }
+  currentThread->Finish();
 }
 
 #endif

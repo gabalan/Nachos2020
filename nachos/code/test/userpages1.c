@@ -1,6 +1,6 @@
 #include "syscall.h"
-#define THIS "aaa"
-#define THAT "bbb"
+#define THIS "ccc"
+#define THAT "ddd"
 const int N = 10; // Choose it large enough!
 
 void puts(const char *s)
@@ -23,3 +23,4 @@ int main()
   f(THAT);
   ThreadExit();
 }
+

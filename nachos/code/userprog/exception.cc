@@ -91,21 +91,22 @@ ExceptionHandler(ExceptionType which)
       case SC_Exit:
         {
           int returnCode = machine->ReadRegister(4);
-          printf("User program exited with %d \n", returnCode);
-          do_ThreadExit();
+          DEBUG('s', "Exit syscall code: %d\n", returnCode);
+          printf("User program exited with %d\n", returnCode);
+          do_ProcessExit();
           break;
         }
       case SC_PutChar:
         {
           int c = machine->ReadRegister(4);
-          DEBUG('s', "PutChar syscall char: %c\n",c);
+          DEBUG('s', "PutChar syscall char: %c\n", c);
           synchconsole->SynchPutChar(c);
           break;
         }
       case SC_PutString:
         {
           int str = machine->ReadRegister(4);
-          DEBUG('s', "PutString syscall str: %s\n",str);
+          DEBUG('s', "PutString syscall str: %s\n", str);
           char to[MAX_STRING_SIZE];
           copyStringFromMachine(str, to, MAX_STRING_SIZE);
           synchconsole->SynchPutString(to);
@@ -115,7 +116,7 @@ ExceptionHandler(ExceptionType which)
         {
           DEBUG('s', "GetChar syscall\n");
           int c = synchconsole->SynchGetChar();
-          DEBUG('s', "Recieved %c char\n", (char)c);
+          DEBUG('s', "Recieved %c char\n", (char) c);
           machine->WriteRegister(2, c);
           break;
         }
@@ -137,24 +138,24 @@ ExceptionHandler(ExceptionType which)
               printf("Cannot get %d characters, maximum is %d\n", size, MAX_STRING_SIZE);
               size = MAX_STRING_SIZE;
             }
-            if (canProceed)
-              {
-                char buf[size];
-                synchconsole->SynchGetString(buf,size);
-                copyStringToMachine(buf, to, size);
-              }
+          if (canProceed)
+            {
+              char buf[size];
+              synchconsole->SynchGetString(buf, size);
+              copyStringToMachine(buf, to, size);
+            }
           break;
         }
       case SC_PutInt:
         {
           int n = machine->ReadRegister(4);
-          DEBUG('s',"PutInt syscall value: %d\n",n);
+          DEBUG('s', "PutInt syscall value: %d\n", n);
           synchconsole->SynchPutInt(n);
           break;
         }
       case SC_GetInt:
         {
-          DEBUG('s',"GetInt syscall\n");
+          DEBUG('s', "GetInt syscall\n");
           int to, n;
           to = machine->ReadRegister(4);
           bool isInteger = synchconsole->SynchGetInt(&n);
@@ -167,11 +168,11 @@ ExceptionHandler(ExceptionType which)
         {
           int f, arg, exit_func;
           f = machine->ReadRegister(4);
-          DEBUG('s', "ThreadCreate syscall f: %d\n",f);
+          DEBUG('s', "ThreadCreate syscall f: %d\n", f);
           arg = machine->ReadRegister(5);
           exit_func = machine->ReadRegister(6);
-          if (do_ThreadCreate(f,arg,exit_func) != -1)
-            DEBUG('s', "Thread created\n");
+          if (do_ThreadCreate(f, arg, exit_func) != -1)
+            DEBUG('s', "Thread created f: %d\n", f);
           else
             {
               DEBUG('s', "Thread creation failed\n");
@@ -189,50 +190,51 @@ ExceptionHandler(ExceptionType which)
       case SC_SemInit:
         {
           int value = machine->ReadRegister(4);
-          DEBUG('s', "SemInit syscall initial value: %d\n",value);
+          DEBUG('s', "SemInit syscall initial value: %d\n", value);
           sem_t semId = do_semInit(value);
-          machine->WriteRegister(2,semId);
+          machine->WriteRegister(2, semId);
           break;
         }
       case SC_SemDestroy:
         {
           int semId = machine->ReadRegister(4);
-          DEBUG('s', "SemDestroy syscall id: %d\n",semId);
+          DEBUG('s', "SemDestroy syscall id: %d\n", semId);
           int returnValue = do_semDestroy(semId);
           if (returnValue == -1)
             DEBUG('s', "sem_t hasn't been initialised\n");
-          machine->WriteRegister(2,returnValue);
+          machine->WriteRegister(2, returnValue);
           break;
         }
       case SC_SemWait:
         {
           int semId = machine->ReadRegister(4);
-          DEBUG('s', "SemWait syscall id: %d\n",semId);
+          DEBUG('s', "SemWait syscall id: %d\n", semId);
           int returnValue = do_semWait(semId);
           if (returnValue == -1)
             DEBUG('s', "sem_t hasn't been initialised\n");
-          machine->WriteRegister(2,returnValue);
+          machine->WriteRegister(2, returnValue);
           break;
         }
       case SC_SemPost:
         {
           int semId = machine->ReadRegister(4);
-          DEBUG('s', "SemPost syscall id: %d\n",semId);
+          DEBUG('s', "SemPost syscall id: %d\n", semId);
           int returnValue = do_semPost(semId);
           if (returnValue == -1)
             DEBUG('s', "sem_t hasn't been initialised\n");
-          machine->WriteRegister(2,returnValue);
+          machine->WriteRegister(2, returnValue);
           break;
         }
       case SC_ForkExec :
-      {
-        int value = machine->ReadRegister(4);
-        char* to = new char[MAX_STRING_SIZE+1]; 
-        copyStringFromMachine(value, to, MAX_STRING_SIZE);
-         do_ForkExec(to);
-        break;
+        {
+          int value = machine->ReadRegister(4);
+          char to[MAX_STRING_SIZE];
+          copyStringFromMachine(value, to, MAX_STRING_SIZE);
+          DEBUG('s', "ForkExec syscall program: %s\n", to);
+          do_ForkExec(to);
+          break;
 
-      }
+        }
 #endif //CHANGED
       default:
         {

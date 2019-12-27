@@ -21,13 +21,12 @@
 #include "noff.h"
 #include "syscall.h"
 #include "new"
-#include <strings.h>
 
 #ifdef CHANGED
 
 static void ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes, int position,
-TranslationEntry *pageTable, unsigned numPages);
-#endif
+                          TranslationEntry *pageTable, unsigned numPages);
+#endif // CHANGED
 //----------------------------------------------------------------------
 // SwapHeader
 //      Do little endian to big endian conversion on the bytes in the
@@ -36,19 +35,19 @@ TranslationEntry *pageTable, unsigned numPages);
 //----------------------------------------------------------------------
 
 static void
-SwapHeader (NoffHeader * noffH)
+SwapHeader(NoffHeader *noffH)
 {
-    noffH->noffMagic = WordToHost (noffH->noffMagic);
-    noffH->code.size = WordToHost (noffH->code.size);
-    noffH->code.virtualAddr = WordToHost (noffH->code.virtualAddr);
-    noffH->code.inFileAddr = WordToHost (noffH->code.inFileAddr);
-    noffH->initData.size = WordToHost (noffH->initData.size);
-    noffH->initData.virtualAddr = WordToHost (noffH->initData.virtualAddr);
-    noffH->initData.inFileAddr = WordToHost (noffH->initData.inFileAddr);
-    noffH->uninitData.size = WordToHost (noffH->uninitData.size);
-    noffH->uninitData.virtualAddr =
-	WordToHost (noffH->uninitData.virtualAddr);
-    noffH->uninitData.inFileAddr = WordToHost (noffH->uninitData.inFileAddr);
+  noffH->noffMagic = WordToHost(noffH->noffMagic);
+  noffH->code.size = WordToHost(noffH->code.size);
+  noffH->code.virtualAddr = WordToHost(noffH->code.virtualAddr);
+  noffH->code.inFileAddr = WordToHost(noffH->code.inFileAddr);
+  noffH->initData.size = WordToHost(noffH->initData.size);
+  noffH->initData.virtualAddr = WordToHost(noffH->initData.virtualAddr);
+  noffH->initData.inFileAddr = WordToHost(noffH->initData.inFileAddr);
+  noffH->uninitData.size = WordToHost(noffH->uninitData.size);
+  noffH->uninitData.virtualAddr =
+      WordToHost(noffH->uninitData.virtualAddr);
+  noffH->uninitData.inFileAddr = WordToHost(noffH->uninitData.inFileAddr);
 }
 
 //----------------------------------------------------------------------
@@ -72,89 +71,81 @@ List AddrSpaceList;
 //      "executable" is the file containing the object code to load into memory
 //----------------------------------------------------------------------
 
-AddrSpace::AddrSpace (OpenFile * executable)
+AddrSpace::AddrSpace(OpenFile *executable)
 {
-    unsigned int i, size;
+  unsigned int i, size;
 
-    executable->ReadAt (&noffH, sizeof (noffH), 0);
-  //  #ifdef
-    //ReadAtVirtual(executable,noffH,sizeof (noffH),0,machine->pageTable,machine->pageTableSize);
-    //#endif
-    if ((noffH.noffMagic != NOFFMAGIC) &&
-	(WordToHost (noffH.noffMagic) == NOFFMAGIC))
-	SwapHeader (&noffH);
-    /* Check that this is really a MIPS program */
-    ASSERT (noffH.noffMagic == NOFFMAGIC);
+  executable->ReadAt(&noffH, sizeof(noffH), 0);
+  if ((noffH.noffMagic != NOFFMAGIC) &&
+      (WordToHost(noffH.noffMagic) == NOFFMAGIC))
+    SwapHeader(&noffH);
+  /* Check that this is really a MIPS program */
+  ASSERT (noffH.noffMagic == NOFFMAGIC);
 
 // how big is address space?
-    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStacksAreaSize;	// we need to increase the size
-    // to leave room for the stack
-    numPages = divRoundUp (size, PageSize);
-    size = numPages * PageSize;
+  size = noffH.code.size + noffH.initData.size + noffH.uninitData.size
+         + UserStacksAreaSize;    // we need to increase the size
+  // to leave room for the stack
+  numPages = divRoundUp (size, PageSize);
+  size = numPages * PageSize;
 
-    // check we're not trying
-    // to run anything too big --
-    // at least until we have
-    // virtual memory
-    if (numPages > NumPhysPages)
-	    throw std::bad_alloc();
+  // check we're not trying
+  // to run anything too big --
+  // at least until we have
+  // virtual memory
+  if (numPages > NumPhysPages)
+    throw std::bad_alloc();
 
-    DEBUG ('a', "Initializing address space, num pages %d, total size 0x%x\n",
-	   numPages, size);
+  DEBUG('a', "Initializing address space, num pages %d, total size 0x%x\n",
+        numPages, size);
 // first, set up the translation
-    pageTable = new TranslationEntry[numPages];
-    for (i = 0; i < numPages; i++)
-      {
-    pageTable[i].virtualPage = i;
-    #ifdef CHANGED
-	  pageTable[i].physicalPage =machine->pagepr->GetEmptyPage();	//i+1
-    #endif //CHANGED
-	  pageTable[i].valid = TRUE;
-	  pageTable[i].use = FALSE;
-	  pageTable[i].dirty = FALSE;
-	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on
-	  // a separate page, we could set its
-	  // pages to be read-only
-      }
+  pageTable = new TranslationEntry[numPages];
+  for (i = 0; i < numPages; i++)
+    {
+      pageTable[i].virtualPage = i;
+#ifdef CHANGED
+      pageTable[i].physicalPage = pagepr->GetEmptyPage();
+#endif //CHANGED
+      pageTable[i].valid = TRUE;
+      pageTable[i].use = FALSE;
+      pageTable[i].dirty = FALSE;
+      pageTable[i].readOnly = FALSE;    // if the code segment was entirely on
+      // a separate page, we could set its
+      // pages to be read-only
+    }
 
 // then, copy in the code and data segments into memory
-    if (noffH.code.size > 0)
-      {
-	  DEBUG ('a', "Initializing code segment, at 0x%x, size 0x%x\n",
-		 noffH.code.virtualAddr, noffH.code.size);
-	 /* executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
-			      noffH.code.size, noffH.code.inFileAddr);*/
-          #ifdef CHANGED
-          ReadAtVirtual(executable,noffH.code.virtualAddr,noffH.code.size,noffH.code.inFileAddr,pageTable,numPages);
-          #endif
-      }
-    if (noffH.initData.size > 0)
-      {
-	  DEBUG ('a', "Initializing data segment, at 0x%x, size 0x%x\n",
-		 noffH.initData.virtualAddr, noffH.initData.size);
-	  /*executable->ReadAt (&
-			      (machine->mainMemory
-			       [noffH.initData.virtualAddr]),
-			      noffH.initData.size, noffH.initData.inFileAddr);
-            */
-      #ifdef CHANGED
-      ReadAtVirtual(executable,noffH.initData.virtualAddr,noffH.initData.size,noffH.initData.inFileAddr,pageTable,numPages);
-      #endif
-      }
+  if (noffH.code.size > 0)
+    {
+      DEBUG('a', "Initializing code segment, at 0x%x, size 0x%x\n",
+            noffH.code.virtualAddr, noffH.code.size);
+#ifdef CHANGED
+      ReadAtVirtual(executable, noffH.code.virtualAddr, noffH.code.size, noffH.code.inFileAddr, pageTable, numPages);
+#endif
+    }
+  if (noffH.initData.size > 0)
+    {
+      DEBUG('a', "Initializing data segment, at 0x%x, size 0x%x\n",
+            noffH.initData.virtualAddr, noffH.initData.size);
+#ifdef CHANGED
+      ReadAtVirtual(executable, noffH.initData.virtualAddr, noffH.initData.size,
+                    noffH.initData.inFileAddr, pageTable, numPages);
+#endif
+    }
 
-
-    DEBUG ('a', "Area for stacks at 0x%x, size 0x%x\n",
-	   size - UserStacksAreaSize, UserStacksAreaSize);
+  DEBUG('a', "Area for stacks at 0x%x, size 0x%x\n",
+        size - UserStacksAreaSize, UserStacksAreaSize);
 
 #ifdef CHANGED
-    threadStackLocations = new BitMap(UserStacksAreaSize / UserThreadStackSize);
-    AllocateUserStack(&currentThread->bitmapLocation);
+  threadStackLocations = new BitMap(UserStacksAreaSize / UserThreadStackSize);
+  threadStackLocations->Mark(0);
+  currentThread->bitmapLocation = numPages * PageSize;
 #endif // CHANGED
 
-    pageTable[0].valid = FALSE;			// Catch NULL dereference
+  pageTable[0].valid = FALSE;            // Catch NULL dereference
 
-    AddrSpaceList.Append(this);
-    machine->DumpMem("fork.svg");
+  AddrSpaceList.Append(this);
+  machine->DumpMem("fork.svg");
 }
 
 //----------------------------------------------------------------------
@@ -162,19 +153,22 @@ AddrSpace::AddrSpace (OpenFile * executable)
 //      Dealloate an address space.  Nothing for now!
 //----------------------------------------------------------------------
 
-AddrSpace::~AddrSpace ()
+AddrSpace::~AddrSpace()
 {
+#ifdef CHANGED
+  // Releasing pages from PageProvider
+  for (unsigned i = 0; i < numPages; i++)
+    {
+      if (pageTable[i].valid)
+        pagepr->ReleasePage(pageTable[i].physicalPage);
+    }
+
   // LB: Missing [] for delete
   // delete pageTable;
-  delete [] pageTable;
-#ifdef CHANGED
+  delete[] pageTable;
   delete threadStackLocations;
 
-  for (unsigned i = 0; i < numPages; i++){
-    machine->pagepr->ReleasePage(pageTable[i].physicalPage);
-  }
-#endif //CHANGED
-  // End of modification
+#endif // CHANGED
 
   AddrSpaceList.Remove(this);
 }
@@ -190,26 +184,28 @@ AddrSpace::~AddrSpace ()
 //----------------------------------------------------------------------
 
 void
-AddrSpace::InitRegisters ()
+AddrSpace::InitRegisters()
 {
-    int i;
+  int i;
 
-    for (i = 0; i < NumTotalRegs; i++)
-	machine->WriteRegister (i, 0);
+  for (i = 0; i < NumTotalRegs; i++)
+    machine->WriteRegister(i, 0);
 
-    // Initial program counter -- must be location of "Start"
-    machine->WriteRegister (PCReg, USER_START_ADDRESS);
+  // Initial program counter -- must be location of "Start"
+  machine->WriteRegister(PCReg, USER_START_ADDRESS);
 
-    // Need to also tell MIPS where next instruction is, because
-    // of branch delay possibility
-    machine->WriteRegister (NextPCReg, machine->ReadRegister(PCReg) + 4);
+  // Need to also tell MIPS where next instruction is, because
+  // of branch delay possibility
+  machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
 
-    // Set the stack register to the end of the address space, where we
-    // allocated the stack; but subtract off a bit, to make sure we don't
-    // accidentally reference off the end!
-    machine->WriteRegister (StackReg, numPages * PageSize - 16);
-    DEBUG ('a', "Initializing stack register to 0x%x\n",
-	   numPages * PageSize - 16);
+  // Set the stack register to the end of the address space, where we
+  // allocated the stack; but subtract off a bit, to make sure we don't
+  // accidentally reference off the end!
+  machine->WriteRegister(StackReg, numPages * PageSize - 16);
+  DEBUG('a', "Initializing stack register to 0x%x\n",
+        numPages * PageSize - 16);
+
+  threadList.Append(currentThread);
 }
 
 //----------------------------------------------------------------------
@@ -219,42 +215,42 @@ AddrSpace::InitRegisters ()
 
 static void
 DrawArea(FILE *output, unsigned x, unsigned virtual_x,
-	 unsigned y, unsigned blocksize,
-	 struct segment *segment, const char *name)
+         unsigned y, unsigned blocksize,
+         struct segment *segment, const char *name)
 {
-    if (segment->size == 0)
-	return;
+  if (segment->size == 0)
+    return;
 
-    ASSERT((segment->virtualAddr % PageSize == 0));
-    ASSERT((segment->size % PageSize == 0));
-    unsigned page = segment->virtualAddr / PageSize;
-    unsigned end = (segment->virtualAddr + segment->size) / PageSize;
+  ASSERT((segment->virtualAddr % PageSize == 0));
+  ASSERT((segment->size % PageSize == 0));
+  unsigned page = segment->virtualAddr / PageSize;
+  unsigned end = (segment->virtualAddr + segment->size) / PageSize;
 
-    fprintf(output, "<rect x=\"%u\" y=\"%u\" width=\"%u\" height=\"%u\" "
-		    "fill=\"#ffffff\" "
-		    "stroke=\"#000000\" stroke-width=\"1\"/>\n",
-		    x, y - end * blocksize,
-		    virtual_x - x, (end - page) * blocksize);
+  fprintf(output, "<rect x=\"%u\" y=\"%u\" width=\"%u\" height=\"%u\" "
+                  "fill=\"#ffffff\" "
+                  "stroke=\"#000000\" stroke-width=\"1\"/>\n",
+          x, y - end * blocksize,
+          virtual_x - x, (end - page) * blocksize);
 
-    fprintf(output, "<text x=\"%u\" y=\"%u\" fill=\"#000000\" font-size=\"%u\">%s</text>\n",
-	    x, y - page * blocksize, blocksize, name);
+  fprintf(output, "<text x=\"%u\" y=\"%u\" fill=\"#000000\" font-size=\"%u\">%s</text>\n",
+          x, y - page * blocksize, blocksize, name);
 }
 
 unsigned
 AddrSpace::Dump(FILE *output, unsigned virtual_x, unsigned virtual_width,
-		unsigned physical_x, unsigned virtual_y, unsigned y,
-		unsigned blocksize)
+                unsigned physical_x, unsigned virtual_y, unsigned y,
+                unsigned blocksize)
 {
-    unsigned ret = machine->DumpPageTable(output, pageTable, numPages,
-	    virtual_x, virtual_width, physical_x, virtual_y, y, blocksize);
+  unsigned ret = machine->DumpPageTable(output, pageTable, numPages,
+                                        virtual_x, virtual_width, physical_x, virtual_y, y, blocksize);
 
-    DrawArea(output, 0, virtual_x, virtual_y, blocksize, &noffH.code, "code");
-    DrawArea(output, 0, virtual_x, virtual_y, blocksize, &noffH.initData, "data");
-    DrawArea(output, 0, virtual_x, virtual_y, blocksize, &noffH.uninitData, "bss");
+  DrawArea(output, 0, virtual_x, virtual_y, blocksize, &noffH.code, "code");
+  DrawArea(output, 0, virtual_x, virtual_y, blocksize, &noffH.initData, "data");
+  DrawArea(output, 0, virtual_x, virtual_y, blocksize, &noffH.uninitData, "bss");
 
-    DumpThreadsState(output, this, virtual_x, virtual_y, blocksize);
+  DumpThreadsState(output, this, virtual_x, virtual_y, blocksize);
 
-    return ret;
+  return ret;
 }
 
 //----------------------------------------------------------------------
@@ -265,17 +261,18 @@ AddrSpace::Dump(FILE *output, unsigned virtual_x, unsigned virtual_width,
 unsigned
 AddrSpacesRoom(unsigned blocksize)
 {
-    ListElement *element;
-    unsigned room = 0;
+  ListElement *element;
+  unsigned room = 0;
 
-    for (element = AddrSpaceList.FirstElement ();
-	 element;
-	 element = element->next) {
-	AddrSpace *space = (AddrSpace*) element->item;
-	room += machine->PageTableRoom(space->NumPages(), blocksize);
+  for (element = AddrSpaceList.FirstElement();
+       element;
+       element = element->next)
+    {
+      AddrSpace *space = (AddrSpace *) element->item;
+      room += machine->PageTableRoom(space->NumPages(), blocksize);
     }
 
-    return room;
+  return room;
 }
 
 //----------------------------------------------------------------------
@@ -285,18 +282,19 @@ AddrSpacesRoom(unsigned blocksize)
 
 void
 DumpAddrSpaces(FILE *output,
-	       unsigned virtual_x, unsigned virtual_width,
-	       unsigned physical_x, unsigned y, unsigned blocksize)
+               unsigned virtual_x, unsigned virtual_width,
+               unsigned physical_x, unsigned y, unsigned blocksize)
 {
-    ListElement *element;
-    unsigned virtual_y = y;
+  ListElement *element;
+  unsigned virtual_y = y;
 
-    /* TODO: sort by physical page addresses to avoid too much mess */
-    for (element = AddrSpaceList.FirstElement ();
-	 element;
-	 element = element->next) {
-	AddrSpace *space = (AddrSpace*) element->item;
-	virtual_y -= space->Dump(output, virtual_x, virtual_width, physical_x, virtual_y, y, blocksize);
+  /* TODO: sort by physical page addresses to avoid too much mess */
+  for (element = AddrSpaceList.FirstElement();
+       element;
+       element = element->next)
+    {
+      AddrSpace *space = (AddrSpace *) element->item;
+      virtual_y -= space->Dump(output, virtual_x, virtual_width, physical_x, virtual_y, y, blocksize);
     }
 }
 
@@ -309,7 +307,7 @@ DumpAddrSpaces(FILE *output,
 //----------------------------------------------------------------------
 
 void
-AddrSpace::SaveState ()
+AddrSpace::SaveState()
 {
 }
 
@@ -322,15 +320,16 @@ AddrSpace::SaveState ()
 //----------------------------------------------------------------------
 
 void
-AddrSpace::RestoreState ()
+AddrSpace::RestoreState()
 {
-    machine->pageTable = pageTable;
-    machine->pageTableSize = numPages;
+  machine->pageTable = pageTable;
+  machine->pageTableSize = numPages;
 }
 
 #ifdef CHANGED
-int AddrSpace::AllocateUserStack(int* bitmapLocation)
+int AddrSpace::AllocateUserStack(int *bitmapLocation)
 {
+  threadList.Append(currentThread);
   int bitmapBit = threadStackLocations->Find();
   *bitmapLocation = bitmapBit;
   if (bitmapBit == -1)
@@ -340,33 +339,50 @@ int AddrSpace::AllocateUserStack(int* bitmapLocation)
 
 void AddrSpace::DeallocateUserStack(int bitmapLocation)
 {
+  threadList.Remove(currentThread);
   threadStackLocations->Clear(bitmapLocation);
 }
 int AddrSpace::getNumThreads()
 {
-  return threadStackLocations->NumSet();
+  return threadList.Length();
 }
 bool AddrSpace::isStackFull()
 {
   return threadStackLocations->NumClear() == 0;
 }
+void AddrSpace::finishThreads()
+{
+  Thread *caller = currentThread;
+  while (!threadList.IsEmpty())
+    {
+      Thread *toend = (Thread *) threadList.Remove();
+      if (toend != caller)
+        {
+          currentThread = toend;
+          currentThread->Finish();
+        }
+    }
+  currentThread = caller;
+}
 
 static void ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes, int position,
-TranslationEntry *pageTable, unsigned numPages){
+                          TranslationEntry *pageTable, unsigned numPages)
+{
 
   char buf[numBytes];
-  int sizeBufRead=executable->ReadAt(buf,numBytes,position);
-  ASSERT(numPages*PageSize>(unsigned)virtualaddr+sizeBufRead);
-  ASSERT(numBytes==sizeBufRead);
+  int sizeBufRead = executable->ReadAt(buf, numBytes, position);
+  ASSERT(numPages * PageSize > (unsigned) virtualaddr + sizeBufRead);
+  ASSERT(numBytes == sizeBufRead);
   //Copy
-  TranslationEntry *pageTableTmp=machine->pageTable;
-  unsigned numPagesTmp=  machine->pageTableSize;
+  TranslationEntry *pageTableTmp = machine->pageTable;
+  unsigned numPagesTmp = machine->pageTableSize;
   //WriteMem
-  machine->pageTable =pageTable;
+  machine->pageTable = pageTable;
   machine->pageTableSize = numPages;
-  for(int i=0;i<sizeBufRead;i++) {
-    machine->WriteMem(virtualaddr+i, 1, *(buf+i));
-  }
+  for (int i = 0; i < sizeBufRead; i++)
+    {
+      machine->WriteMem(virtualaddr + i, 1, *(buf + i));
+    }
   //Restore
   machine->pageTable = pageTableTmp;
   machine->pageTableSize = numPagesTmp;
